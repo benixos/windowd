@@ -1,0 +1,109 @@
+.mainstage {
+    float:left;
+}
+
+.divider {
+    border-right: 1px solid #f9f9f9;
+    float: left;
+}
+
+.row {
+    width:100%;   
+}
+
+.row:after {
+    content: "";
+    clear: both;
+    display: block;
+}
+
+.navTitle {
+    float: left;
+    font-size: 25px;
+    display: block;
+    line-height: 2em;
+    padding: 0.5em 0.5em;
+    text-decoration: none;
+}
+
+.navLeft {
+    float: left;
+}
+
+.navRight {
+    float: right;
+}
+
+.mainstage {
+    float:left;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+.mainNav {
+    background-color:#333;
+    overflow: hidden;
+    margin: 0;
+    color:#aaa;
+    line-height: 2em;
+    padding: 0;
+}
+
+.mainNav ul {
+    margin: 0;
+    padding: 0;
+}
+
+.mainNav ul li {
+    display: inline-block;
+}
+
+.mainNav ul li a {
+    color:#aaa;
+    display: block;
+    line-height: 2em;
+    padding: 0.5em 0.5em;
+    text-decoration: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+}
+
+[class*="col-"] {
+    width: 100%   
+}
+
+[class*="col-"] {
+    float: left;
+    padding: 15px;
+}
+
+@media only screen and (min-width: 768px) {
+.col-1  {width: 8.33%;}
+.col-2  {width: 16.66%;}
+.col-3  {width: 25%;}
+.col-4  {width: 33.33%;}
+.col-5  {width: 41.66%;}
+.col-6  {width: 50%;}
+.col-7  {width: 58.33%;}
+.col-8  {width: 66.66%;}
+.col-9  {width: 75%;}
+.col-10 {width: 83.33%;}
+.col-11 {width: 91.66%;}
+.col-12 {width: 100%;}
+}
+
+.code {
+	background-color: #f8f8f8;
+	border: 1px solid #c0c0c0;
+	overflow: hidden;
+	margin: 10px;
+	
+}
