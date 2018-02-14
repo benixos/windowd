@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="facade" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <title>QuickRing: AgI PHP Demo</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <style @import url("//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css") ></style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <script src="./lib/agi.lib.js"></script>
+     <script src="./lib/strophe.js"></script>
+     <script src="./bin/bin.js"></script>
+     <script src="./main.js"></script>    
+</head>
+    
+<body  ng-controller="MainStageController as stage" style="height:100%; background:#8d8d8d; overflow:hidden" onload="boot()">
+    <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner" >
+            <div class="container" >
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+		              <div class="navbar-header">    
+		                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+		                      <span class="sr-only">Toggle navigation</span>
+		                      <span class="icon-bar"></span>
+		                      <span class="icon-bar"></span>
+		                      <span class="icon-bar"></span>
+		                  </button> 		      
+		              </div>
+		              <div id="navbar" class="navbar-collapse collapse ">
+		                  <ul class="nav navbar-nav">
+		                      <li ><a href="./"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+		                  </ul>
+		                  <ul class="nav navbar-nav navbar-right">
+		                      <li><a href="javascript:console.toggle()"><span class="glyphicon glyphicon-cog"></span></a></li>
+		                  </ul>
+		              </div>
+                    </div><!--/.nav-collapse -->
+                </nav>
+            </div><!--/.container-fluid -->
+    </header>
+ 
+    <div class="bs-docs-section" >
+      <div class="container" style="height:100%">
+        <div class="row col-md-2" style="margin:auto; background:white"  ng-view>
+            <form onsubmit="javascript:login(this)" id="loginForm">
+            <label for="name">User Name:</label><br>
+            <input type="text" id="name"><br>
+            <label for="pass">Password:</label><br>
+            <input type="password" id="pass"><br>
+            <input type="button" value="Login" onclick="javascript:login(this)"/>
+            </form>       
+            
+            <FORM action="http://127.0.0.1:1807" method="post">
+            <P>
+            <LABEL for="type">Message Type: </LABEL>
+            <INPUT type="text" name="type" id="type"><BR>
+            <LABEL for="sessionID">SessionID: </LABEL>
+            <INPUT type="text" name="sessionID"><BR>
+            <LABEL for="path">path: </LABEL>
+            <INPUT type="text" name="path"><BR>
+            <LABEL for="data">node: </LABEL>
+            <INPUT type="text" name="data"><BR>
+            <INPUT type="submit" value="Send"> <INPUT type="reset">
+            </P>
+            </FORM>
+        </div>   
+        <div class="row col-md-10" style="margin:auto; background:white"  ng-view>
+              
+        </div>  
+      </div>
+    </div>
+
+    <footer class="bs-docs-footer col-md-12" role="contentinfo" style="position:absolute; bottom:0">
+      <div class="container-fluid col-md-12">
+        <div class="row" style="text-align:center">                          
+                    <hr>    
+        </div>
+        <div class="row" style="text-align:center;text-align:center">
+                     <p class="text-muted " style="text-align:center">&copy;2015 Softsurve</p>
+        </div>
+      </div>
+    </footer>
+
+    <div id="cmd" style="width:600px;height:400px;z-index:100;opacity:0;background-color:black;font:white">$> </div>
+    <div id="log" style="width:0px;height:0px;z-index:100;opacity:0">$> </div>
+</body>
+</html>

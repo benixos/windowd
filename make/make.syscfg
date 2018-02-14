@@ -1,0 +1,177 @@
+#figure out a few things about the host build system
+ifeq ($(HOSTTYPE),)
+	HOSTTYPE := $(shell uname -m)
+endif
+ifeq ($(OSTYPE),)
+	OSTYPE := $(shell uname -s | awk -F_ '{print $$1}' | tr A-Z a-z)
+endif
+
+# default platform and arch
+ifeq ($(PLATFORM),)
+	ifeq ($(ARCH),)
+		ARCH := x86_64
+		PLATFORM := pc
+	endif
+endif
+
+# some platforms only support one arch
+ifeq ($(PLATFORM),pegasos)
+ARCH := ppc
+endif
+ifeq ($(PLATFORM),mac)
+ARCH := ppc
+endif
+ifeq ($(PLATFORM),xbox)
+ARCH := i386
+endif
+ifeq ($(PLATFORM),dreamcast)
+ARCH := sh4
+endif
+
+# some arches only support one platform
+ifeq ($(ARCH),x86_64)
+PLATFORM := pc
+endif
+ifeq ($(ARCH),sh4)
+PLATFORM := dreamcast
+endif
+
+# build the TARGET variable
+TARGET := $(ARCH)-$(PLATFORM)
+
+# HOST_* is for local targets (tools)
+HOST_CC := gcc
+HOST_LD := $(LD)
+HOST_AS := $(AS)
+HOST_AR := $(AR)
+HOST_OBJCOPY := objcopy
+HOST_OBJDUMP := objdump
+HOST_STRIP := strip
+HOST_SIZE := size
+
+# setup some local commands
+ECHO := echo
+AWK := awk
+ifeq ($(OSTYPE),SunOS)
+	ECHO := /usr/ucb/echo
+	AWK := gawk
+endif
+ifeq ($(findstring solaris,$(OSTYPE)),solaris)
+	ECHO := /usr/ucb/echo
+	AWK := gawk
+endif
+
+# TOOLCHAIN_ARCH is usually ARCH, except in a few cases
+TOOLCHAIN_ARCH := $(ARCH)
+ifeq ($(ARCH),sh4)
+TOOLCHAIN_ARCH := sh
+endif
+
+# set up some particular options for various architectures
+ifeq ($(ARCH),i386)
+	GLOBAL_CFLAGS = -O2 -g
+	USER_CFLAGS = -fpic
+	GLOBAL_LDFLAGS = -g
+endif
+
+ifeq ($(ARCH),x86_64)
+	GLOBAL_CFLAGS = -O2 -g 
+	USER_CFLAGS = -fpic
+	GLOBAL_LDFLAGS = -g -m elf_x86_64
+endif
+
+ifeq ($(ARCH),ppc)
+	GLOBAL_CFLAGS = -fno-pic -O -D__PPC__ -mregnames
+	GLOBAL_LDFLAGS =
+endif
+
+ifeq ($(ARCH),ppc64)
+	GLOBAL_CFLAGS =
+	GLOBAL_LDFLAGS =
+endif
+
+ifeq ($(ARCH),arm)
+	GLOBAL_CFLAGS = -O2 -g
+	USER_CFLAGS = -fpic
+	GLOBAL_LDFLAGS =
+endif
+
+ifeq ($(ARCH),sh4)
+	GLOBAL_CFLAGS = -ml -m4-single-only -mhitachi -O2 -g -D__SH4__
+	KERNEL_CFLAGS = -fno-pic
+	USER_CFLAGS = -fpic
+	GLOBAL_LDFLAGS = -EL
+endif
+
+ifeq ($(ARCH),sparc64)
+	GLOBAL_CFLAGS =
+	GLOBAL_LDFLAGS =
+endif
+
+ifeq ($(ARCH),sparc)
+	GLOBAL_CFLAGS =
+	GLOBAL_LDFLAGS =
+endif
+
+ifeq ($(ARCH),m68k)
+	GLOBAL_CFLAGS = -O0 -g -m68040
+	KERNEL_CFLAGS = -fno-pic
+	USER_CFLAGS = -fpic
+	GLOBAL_LDFLAGS = -g
+endif
+
+ifeq ($(ARCH),alpha)
+	GLOBAL_CFLAGS =
+	GLOBAL_LDFLAGS =
+endif
+
+ifeq ($(ARCH),mips)
+	GLOBAL_CFLAGS = -fno-pic -mips4 -meb -G 0
+	GLOBAL_LDFLAGS =
+endif
+
+# check to see if we should use distcc and/or ccache
+ifneq ($(USE_DISTCC),)
+$(warning using distcc)
+	CC := distcc $(CC)
+endif
+
+ifneq ($(USE_CCACHE),)
+$(warning using ccache)
+	CC := ccache $(CC)
+endif
+
+# these options are on for all architectures
+#GLOBAL_CFLAGS += -finline -fno-builtin
+GLOBAL_CFLAGS += -Wall -W -Wno-multichar -Wno-unused-parameter -Wmissing-prototypes
+GLOBAL_CFLAGS += -DARCH_$(ARCH)=1 -D__ARCH__=$(ARCH) -U$(ARCH)
+GLOBAL_CFLAGS += -DPLATFORM_$(PLATFORM)=1
+
+GLOBAL_CPPFLAGS = $(GLOBAL_CFLAGS)
+
+GLOBAL_ASFLAGS += -D__ASSEMBLY__
+
+# find libgcc
+LIBGCC := -lgcc
+LIBGCC_PATH := $(dir $(shell $(CC) $(GLOBAL_CFLAGS) -print-libgcc-file-name))
+ifeq ($(ARCH),arm)
+LIBGCC_PATH :=
+endif
+$(warning LIBGCC_PATH = $(LIBGCC_PATH))
+ifneq ($(ARCH),sh4)
+LIBGCC_INCLUDE += -I$(LIBGCC_PATH)/include
+endif
+ifeq ($(ARCH),x86_64)
+LIBGCC32_PATH := $(dir $(shell $(CC) $(GLOBAL_CFLAGS) -m32 -print-libgcc-file-name))
+$(warning LIBGCC32_PATH = $(LIBGCC32_PATH))
+endif
+
+# print some info
+$(warning ARCH = $(ARCH))
+$(warning PLATFORM = $(PLATFORM))
+$(warning TARGET = $(TARGET))
+
+# figure out where the build dir will be
+BUILD_DIR = build/$(TARGET)
+$(warning build dir will be $(BUILD_DIR))
+$(shell mkdir -p $(BUILD_DIR))
